@@ -1,17 +1,10 @@
 # NotPhish
 
-Prototipo funcional de detección de phishing e ingeniería social, construido
-para aprender cómo funciona la detección de amenazas desde cero.
+Proyecto de aprendizaje sobre detección de phishing, construido desde cero para entender cómo funcionan los detectores — y por qué fallan.
 
-Pega un correo, SMS o mensaje sospechoso. NotPhish analiza el texto,
-explica qué señales encontró y qué hacer — en lenguaje simple,
-sin tecnicismos. Diseñado pensando en personas mayores y en cualquiera
-con baja alfabetización digital.
+> No es una herramienta de seguridad profesional. Tiene limitaciones conocidas — las documento abajo. Lo publico porque creo que compartir el proceso de aprendizaje vale más que esperar a tener algo "terminado".
 
-> **Esto es un prototipo de estudio, no una herramienta de seguridad profesional.**
-> Lo construí para aprender. Tiene limitaciones conocidas — las documento abajo.
-> Lo publico porque creo que compartir el proceso de aprendizaje
-> tiene más valor que esperar a tener algo "terminado".
+La interfaz está pensada para personas con baja alfabetización digital: lenguaje simple, sin tecnicismos, orientada a que cualquier persona — especialmente adultos mayores — pueda entender qué encontró el análisis y qué hacer.
 
 ---
 
