@@ -13,8 +13,8 @@ La interfaz está pensada para personas con baja alfabetización digital: lengua
 <p align="center">
   <img src="screenshots/inicio.png" width="200"/>
   <img src="screenshots/critico.png" width="200"/>
-  <img src="screenshots/limpio.png" width="200"/>
   <img src="screenshots/analizado.png" width="200"/>
+  <img src="screenshots/limpio.png" width="200"/>
 </p>
 
 ---
