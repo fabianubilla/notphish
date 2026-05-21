@@ -22,6 +22,17 @@ y siendo transparente sobre cómo se usaron.
 
 ---
 
+## Capturas
+
+<p align="center">
+  <img src="screenshots/inicio.png" width="200"/>
+  <img src="screenshots/critico.png" width="200"/>
+  <img src="screenshots/analizado.png" width="200"/>
+  <img src="screenshots/limpio.png" width="200"/>
+</p>
+
+---
+
 ## Por qué existe
 
 Empecé con una pregunta simple:
@@ -42,17 +53,6 @@ mezclar señales técnicas, contexto semántico y distintas capas de análisis.
 Pensada para personas con baja alfabetización digital — especialmente adultos mayores.
 Lenguaje simple, sin tecnicismos, enfocada en explicar qué encontró el análisis
 y qué hacer después.
-
----
-
-## Capturas
-
-<p align="center">
-  <img src="screenshots/inicio.png" width="200"/>
-  <img src="screenshots/critico.png" width="200"/>
-  <img src="screenshots/analizado.png" width="200"/>
-  <img src="screenshots/limpio.png" width="200"/>
-</p>
 
 ---
 
