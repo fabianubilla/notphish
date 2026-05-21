@@ -17,7 +17,9 @@ con baja alfabetización digital.
 
 ## Capturas
 
-*(Agrega tus capturas aquí después de correr el proyecto)*
+![Inicio](screenshots/inicio.png)
+![Resultado crítico](screenshots/critico.png)
+![Sin riesgo](screenshots/limpio.png)
 
 ---
 
