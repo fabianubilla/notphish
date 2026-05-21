@@ -7,20 +7,41 @@ Proyecto de aprendizaje sobre detección de phishing.
 ## Cómo fue construido — y por qué importa decirlo
 
 Soy estudiante de ingeniería informática y ciberseguridad. A la fecha de este proyecto,
-mis conocimientos de programación todavía son básicos: fundamentos, lógica y exploración.
+mis conocimientos de programación son básicos: fundamentos, lógica y exploración.
 
 Este proyecto fue construido usando Claude (Anthropic) como herramienta de desarrollo.
 La IA tuvo un rol importante en la implementación, en muchas decisiones técnicas y en
 la generación del código.
 
 Mi rol fue definir qué quería explorar, iterar ideas, evaluar propuestas, descartar
-cosas que no tenían sentido para mí y aprender progresivamente cómo funcionaba el sistema.
+lo que no tenía sentido y aprender progresivamente cómo funcionaba el sistema.
 
-No publico este proyecto como algo hecho "100% a mano" ni como un producto profesional.
-Lo publico como parte de un proceso real de aprendizaje y exploración técnica.
+Lo publico como parte de un proceso real de aprendizaje. Creo que hoy aprender
+también implica saber trabajar con herramientas de IA, pero entendiendo sus límites
+y siendo transparente sobre cómo se usaron.
 
-Creo que hoy aprender también implica saber trabajar con herramientas de IA,
-pero entendiendo sus límites y siendo transparente sobre cómo se usaron.
+---
+
+## Por qué existe
+
+Empecé con una pregunta simple:
+
+> **¿cómo sabe un programa que un mensaje es una estafa?**
+
+Primero construí [`social-engineering-scanner`](https://github.com/fivur-cs/social-engineering-scanner)
+— un script Bash que busca palabras clave con `grep`. Funciona para casos obvios,
+pero tiene falsos positivos altos y se evade fácil.
+
+NotPhish nació para explorar qué ocurre cuando intentas ir más allá de reglas fijas:
+mezclar señales técnicas, contexto semántico y distintas capas de análisis.
+
+---
+
+## Para quién es la interfaz
+
+Pensada para personas con baja alfabetización digital — especialmente adultos mayores.
+Lenguaje simple, sin tecnicismos, enfocada en explicar qué encontró el análisis
+y qué hacer después.
 
 ---
 
@@ -35,97 +56,170 @@ pero entendiendo sus límites y siendo transparente sobre cómo se usaron.
 
 ---
 
-## Por qué existe
-
-Empecé con una pregunta simple:
-
-> **¿cómo sabe un programa que un mensaje es una estafa?**
-
-Primero construí [`social-engineering-scanner`](https://github.com/fivur-cs/social-engineering-scanner),
-un script Bash basado en palabras clave y reglas simples.
-
-Funcionaba para casos obvios, pero tenía falsos positivos altos y se evadía con facilidad.
-
-NotPhish nació para explorar qué ocurre cuando intentas ir más allá de reglas fijas:
-mezclar señales técnicas, contexto semántico y distintas capas de análisis.
-
----
-
-## Para quién es la interfaz
-
-La interfaz fue pensada para personas con baja alfabetización digital:
-lenguaje simple, sin tecnicismos innecesarios y enfocada en explicar
-qué encontró el análisis y qué hacer después.
-
-Especialmente pensé en adultos mayores y personas que suelen enfrentarse
-a este tipo de mensajes sin conocimientos técnicos.
-
----
-
 ## Qué hace
 
-- Analiza texto libre: correos, SMS, WhatsApp, etc.
+- Analiza texto libre: correos, SMS, WhatsApp, cualquier mensaje
 - Detecta señales técnicas y semánticas de manipulación
-- Entrega un score de riesgo de 0 a 100
-- Explica el resultado en lenguaje simple
-- Recomienda acciones según el nivel de riesgo
-- Todo ocurre localmente — el texto no sale del equipo
+- Muestra un puntaje de 0 a 100 con explicación en lenguaje simple
+- Recomienda qué hacer según el nivel de riesgo
+- Todo el análisis ocurre localmente — ningún texto sale del equipo
 
 ---
 
 ## Cómo funciona por dentro
 
-Entiendo esta arquitectura principalmente a nivel conceptual y de funcionamiento general,
-no al nivel de poder reconstruir todo el proyecto desde cero sin ayuda.
+Esta parte resume la arquitectura general del proyecto y cómo se conectan sus piezas principales.
 
-El sistema tiene tres capas principales.
+NotPhish tiene tres capas que trabajan juntas:
 
 ---
 
 ### Capa 1 — Motor de reglas JavaScript (`app.js`)
 
-Busca señales técnicas concretas:
+Es el corazón del sistema. Analiza el texto buscando señales técnicas
+concretas, no solo palabras sueltas.
 
-- dominios sospechosos
-- URLs acortadas u ofuscadas
-- pedidos de OTP
-- patrones de fraude corporativo (BEC)
-- señales clásicas de ingeniería social
+**Qué detecta:**
 
-Cada señal tiene un peso numérico y el score final se limita a 100.
+- **Dominios que imitan marcas conocidas** (`banco-estado-seguro.xyz`) —
+  compara el dominio del enlace contra una lista de dominios oficiales
+- **URLs acortadas** (`bit.ly`) — ocultan el destino real
+- **URLs ofuscadas** (`hxxps://`) — técnica para que los filtros no detecten el enlace
+- **Pedidos de OTP** — cuando alguien pide que compartas un código que llegó a tu celular
+- **Patrones de BEC** (fraude del jefe) — urgencia + silencio + transferencia
+- **Señales de ingeniería social** — urgencia artificial, suplantación de autoridad,
+  promesas de beneficio, amenazas de bloqueo
+
+**Cómo funciona el scoring:**
+
+Cada señal tiene un peso numérico. El score final se capea a 100 —
+si un texto activa señales por 270 puntos, el resultado igual es 100.
+El log técnico muestra los pesos individuales para entender qué activó cada cosa,
+no para que sumen el total.
+
+**Señales débiles vs señales duras:**
+
+Las señales débiles (urgencia genérica, mención de una marca, teléfono en el texto)
+no se muestran solas — solo aparecen si hay también señales duras.
+Esto evita alertas alarmantes en correos legítimos que mencionan palabras comunes.
+
+Las señales duras (dominio falso, pedido de OTP, fraude del jefe) siempre aparecen
+porque indican amenaza real.
 
 ---
 
 ### Capa 2 — Modelo de machine learning (`server.py` + `models/`)
 
-La capa ML intenta detectar patrones semánticos que las reglas tradicionales no capturan.
+El motor de reglas detecta señales técnicas, pero no entiende el sentido del texto.
+Un correo puede no tener ninguna URL sospechosa y aun así ser una estafa cuidadosamente escrita.
 
-El modelo fue entrenado sobre miles de textos legítimos y maliciosos usando TF-IDF
-y un clasificador lineal.
+Para eso existe la capa de ML: un clasificador entrenado sobre ~46.000 textos reales.
 
-Devuelve una probabilidad de riesgo que luego se combina con la capa JS.
+**Qué tipo de modelo es:**
+
+Un clasificador lineal basado en SGD (Stochastic Gradient Descent) ajustado para entregar probabilidades más estables.
+No es una red neuronal — es un modelo lineal eficiente entrenado sobre representaciones numéricas del texto usando TF-IDF.
+
+**Qué es TF-IDF:**
+
+Term Frequency - Inverse Document Frequency. Una forma de representar texto como números.
+
+- **TF** — qué tan seguido aparece una palabra en este texto
+- **IDF** — qué tan rara es esa palabra en todos los textos del dataset
+
+Si una palabra aparece mucho aquí pero poco en el dataset general, tiene peso alto.
+Si aparece en todos lados ("el", "de", "que"), tiene peso bajo.
+Así el modelo aprende a enfocarse en las palabras que realmente distinguen
+un phishing de un correo legítimo.
+
+**Word n-grams y char n-grams:**
+
+El modelo analiza el texto de dos formas distintas:
+
+- **Word n-grams (1-2)**: palabras individuales y pares. "expira hoy" es más
+  revelador que "expira" o "hoy" por separado.
+- **Char n-grams (3-4)**: secuencias de caracteres dentro de las palabras.
+  Captura variaciones como "urgente", "urgentee" o "urg3nte".
+
+**Limitación importante:** el modelo fue entrenado mayoritariamente en inglés.
+Su rendimiento en español de LATAM es menor — tasa de falsos positivos ~9.6%
+en español versus ~2.3% en inglés.
+
+Las métricas son aproximadas y corresponden a pruebas exploratorias
+realizadas durante el desarrollo del proyecto.
 
 ---
 
 ### Capa 3 — Sistema híbrido (`hybrid.js`)
 
-La parte más interesante del proyecto fue explorar cómo combinar reglas y ML.
+El motor JS y el modelo ML a veces no están de acuerdo.
+¿A cuál hacerle caso? ¿Cuánto puede cambiar el ML el resultado del JS?
 
-El sistema usa un "evidence gate", que decide cuánto puede influir el ML
-según la cantidad y calidad de señales disponibles.
+La capa híbrida resuelve eso con un **evidence gate** — una compuerta que decide
+cuánta influencia puede tener el ML según el contexto:
 
-La idea principal era evitar falsos positivos absurdos en textos cortos o ambiguos.
+```
+blocked  → texto muy corto, sin señales JS
+           el ML no actúa
+
+partial  → hay señales de legitimidad (newsletter, OTP oficial)
+           el ML solo puede bajar el score, no subirlo
+
+semantic → no hay señales técnicas, solo texto
+           el ML puede dar un boost pequeño si está muy seguro (conf ≥ 0.85)
+
+open     → hay señales JS activas
+           el ML puede subir o bajar el score según su confianza
+```
+
+**Por qué este diseño:**
+
+Sin el gate, el ML podría marcar como sospechoso un texto corto y ambiguo
+solo porque su distribución de palabras se parece superficialmente a algo
+en su dataset. El gate evita ese tipo de falso positivo.
+
+---
+
+## Por qué el score puede sumar más de 100
+
+En el log técnico verás señales que suman 270 puntos o más.
+El score final igual queda en 100.
+
+Eso es correcto — cada señal aporta su peso de forma independiente
+y el resultado se capea al máximo. El log muestra los pesos para
+entender qué activó cada señal, no para que sumen el total.
+
+---
+
+## Cómo leer el código si eres estudiante
+
+El mejor orden para entender el sistema desde cero:
+
+1. **`config.json`** — solo números, pero definen todos los umbrales del sistema.
+   Entender qué significa cada uno es entender cómo está calibrado el detector.
+
+2. **`app.js`** — el motor JS. Las secciones `SECCIÓN 1` (señales) y
+   `SECCIÓN 2` (correlaciones) son el núcleo. Las señales individuales son
+   lo más parecido al scanner Bash — pero con jerarquía y pesos diferenciados.
+
+3. **`hybrid.js`** — lee `computeEvidenceGate()` primero, luego
+   `computeFinalScore()`. Esas dos funciones son el corazón de la arquitectura híbrida.
+
+4. **`server.py`** — es corto. Lee cómo carga el modelo y responde las peticiones.
+
+5. **`index.html`** — la interfaz. El JS de presentación está al final del archivo,
+   separado de la lógica de detección.
 
 ---
 
 ## Limitaciones conocidas
 
-- Falsos positivos en marketing agresivo
-- Rendimiento peor en español LATAM que en inglés
-- No detecta phishing por imágenes o QR
-- No funciona en tiempo real
-- Requiere Python para la capa ML
-- El bypass sigue siendo posible
+- Falsos positivos ~7% en correos de marketing legítimo agresivo
+- FPR en español ~9.6% — el ML fue entrenado principalmente en inglés
+- No detecta phishing por imagen ni por QR
+- No funciona en tiempo real — analiza textos pegados manualmente
+- Requiere Python para la capa ML — sin él, solo funciona el motor JS
+- El bypass es posible — un atacante que conozca las reglas puede evitarlas
 
 ---
 
@@ -140,7 +234,7 @@ python server.py
 
 Luego abre `index.html` en el navegador.
 
-Sin Python, funciona solo la capa JS.
+Sin Python: abre `index.html` directo. Funciona solo con la capa JS.
 
 ---
 
@@ -148,13 +242,15 @@ Sin Python, funciona solo la capa JS.
 
 ```
 notphish/
-├── index.html
-├── app.js
-├── hybrid.js
-├── hints.js
-├── server.py
-├── config.json
+├── index.html       # Interfaz web
+├── app.js           # Motor de reglas JS
+├── hybrid.js        # Sistema híbrido — evidence gate y fusión JS + ML
+├── hints.js         # Textos educativos por tipo de amenaza
+├── server.py        # Servidor Flask para el modelo ML
+├── config.json      # Umbrales y parámetros
 └── models/
+    ├── primary_model_candidate.joblib
+    └── subcategory_model_candidate.joblib
 ```
 
 ---
@@ -162,18 +258,15 @@ notphish/
 ## El punto de partida
 
 [`social-engineering-scanner`](https://github.com/fivur-cs/social-engineering-scanner)
-fue el proyecto anterior y representa una aproximación mucho más simple:
-detección basada en palabras y reglas fijas.
-
-La diferencia entre ambos proyectos muestra precisamente qué problemas
-intenta resolver cada nueva capa.
+es el proyecto anterior — detección basada en palabras y reglas fijas.
+Leer los dos en orden muestra qué problema intenta resolver cada nueva capa.
 
 ---
 
 ## Roadmap
 
 - [ ] Extensión para navegador
-- [ ] OCR para imágenes
+- [ ] Soporte para imágenes con OCR
 - [ ] Más entrenamiento en español LATAM
 - [ ] Versión móvil
 - [ ] Mejoras en explicabilidad
@@ -182,7 +275,7 @@ intenta resolver cada nueva capa.
 
 ## Tecnologías
 
-HTML · CSS · JavaScript · Python · scikit-learn · Flask · TF-IDF
+HTML · CSS · JavaScript vanilla · Python · scikit-learn · Flask · TF-IDF · SGD
 
 ---
 
