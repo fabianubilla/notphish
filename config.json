@@ -1,0 +1,39 @@
+{
+  "_comment": "NotPhish Hybrid Engine v3 \u2014 Configuraci\u00f3n",
+  "ml_server": {
+    "url": "http://127.0.0.1:8765/predict",
+    "timeout_ms": 800,
+    "enabled": true
+  },
+  "thresholds": {
+    "uncertain": 0.55,
+    "review_low": 0.65,
+    "risk_bajo": 25,
+    "risk_medio": 50,
+    "risk_alto": 75,
+    "risk_critico": 90
+  },
+  "evidence_gate": {
+    "min_words_for_ml_boost": 12,
+    "min_js_signals_for_open": 1
+  },
+  "score_adjustment": {
+    "ml_legit_max_discount": 13,
+    "ml_scam_max_boost": 11,
+    "ml_min_conf_for_adjust": 0.7,
+    "ml_conf_scale": 25,
+    "ml_min_conf_open": 0.62
+  },
+  "hard_floors": {
+    "otp_theft": 55,
+    "bec_confirmed": 60,
+    "brand_domain_spoof": 55,
+    "suspicious_domain": 30,
+    "delivery_scam": 40,
+    "direct_data_harvest": 45,
+    "boss_impersonation": 45,
+    "two_stage_bec": 35
+  },
+  "subcat_min_conf": 0.4,
+  "_version": "3.0.0"
+}

@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Datasets y datos de entrenamiento — nunca subir
+*.csv
+*.tsv
+*.jsonl
+hard_negatives*.json
+*_dataset*.csv
+*_dataset*.json
+train_*.csv
+val_*.csv
+test_*.csv
+new_legit.json
+
+# Archivos temporales de entrenamiento
+/tmp/
+*.pkl
+*.pickle
+
+# Logs
+*.log
+server.log
+notphish.log
+
+# Archivos de backup
+*.bak
+*.bak_dark
+*.orig
+
+# Modelos experimentales (solo van los candidatos finales)
+models/primary_model_v*.joblib
+models/subcategory_model_v*.joblib
+# Los candidatos finales SÍ se incluyen:
+# models/primary_model_candidate.joblib
+# models/subcategory_model_candidate.joblib
+
+# Sistema operativo
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Capturas de pantalla (agregar las tuyas en /screenshots/ y eliminar esta línea)
+# screenshots/
