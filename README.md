@@ -17,9 +17,11 @@ con baja alfabetización digital.
 
 ## Capturas
 
-![Inicio](screenshots/inicio.png)
-![Resultado crítico](screenshots/critico.png)
-![Sin riesgo](screenshots/limpio.png)
+<p align="center">
+  <img src="screenshots/inicio.png" width="280"/>
+  <img src="screenshots/critico.png" width="280"/>
+  <img src="screenshots/limpio.png" width="280"/>
+</p>
 
 ---
 
