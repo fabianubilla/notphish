@@ -216,7 +216,7 @@ HTML · CSS · JavaScript vanilla · Python · scikit-learn · Flask · TF-IDF �
 
 ## Sobre este proyecto
 
-Soy estudiante de ingeniería informática y ciberseguridad. A la fecha de este proyecto, mis conocimientos de programación están en una etapa inicial: fundamentos, lógica y exploración práctica.
+Soy estudiante de ingeniería informática y ciberseguridad.
 
 Este proyecto fue construido usando Claude (Anthropic) como herramienta principal de desarrollo. Claude generó gran parte del código y propuso varias de las decisiones técnicas más complejas del sistema.
 
@@ -225,6 +225,7 @@ Mi rol fue definir qué quería explorar, evaluar esas propuestas, probar el sis
 Lo comparto como parte de un proceso real de aprendizaje. Construir algo concreto, aunque fuera con asistencia fuerte de IA, me ayudó mucho más que solo leer teoría.
 
 Espero que también le sirva a otros estudiantes que estén empezando y quieran entender cómo un detector puede evolucionar desde reglas simples hacia sistemas con más capas.
+
 ---
 
 ## Licencia
