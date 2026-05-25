@@ -216,7 +216,7 @@ HTML · CSS · JavaScript vanilla · Python · scikit-learn · Flask · TF-IDF �
 
 ## Sobre este proyecto
 
-Soy estudiante de ingeniería informática y ciberseguridad.
+Soy estudiante de ingeniería informática y ciberseguridad. A la fecha de este proyecto, mis conocimientos de programación están en una etapa inicial: fundamentos, lógica y exploración práctica.
 
 Este proyecto fue construido usando Claude (Anthropic) como herramienta principal de desarrollo. Claude generó gran parte del código y propuso varias de las decisiones técnicas más complejas del sistema.
 
