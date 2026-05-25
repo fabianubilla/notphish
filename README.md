@@ -1,42 +1,46 @@
 # ¿Qué pasa cuando las reglas no son suficientes?
 
 En el proyecto anterior, [Social Engineering Scanner](https://github.com/fabianubilla/social-engineering-scanner), trabajé con una idea simple:
-detectar phishing buscando palabras sospechosas.
+
+> detectar phishing buscando palabras sospechosas.
 
 Ese enfoque sirve para aprender, pero tiene límites claros:
-genera falsos positivos, puede ser evadido y no entiende bien el contexto.
+
+- puede marcar correos legítimos como sospechosos
+- puede ser evadido si el atacante cambia las palabras
+- no entiende bien el contexto del mensaje
 
 NotPhish nace desde esa pregunta:
 
-> ¿qué pasa si combinamos reglas simples con un modelo de machine learning?
+> ¿qué pasa si intentamos mejorar un detector combinando reglas simples con Machine Learning?
 
 ---
 
 # NotPhish
 
-NotPhish es un proyecto educativo para explorar cómo puede evolucionar un detector de phishing cuando deja de depender solo de palabras clave.
+NotPhish es un proyecto educativo para entender cómo puede evolucionar un detector de phishing cuando deja de depender solamente de palabras clave.
 
-Combina tres capas:
+El proyecto combina tres capas:
 
-- reglas en JavaScript
-- un modelo de ML (Machine Learning)
-- una capa híbrida que decide cómo combinar ambas respuestas
+1. un motor de reglas en JavaScript
+2. un modelo de ML (Machine Learning)
+3. una capa híbrida que decide cómo combinar ambos resultados
 
-La idea no es que el sistema sea perfecto.
+La idea no es construir un sistema perfecto.
 
-La idea es entender qué mejora al agregar más capas…
-y qué problemas nuevos aparecen.
+La idea es entender qué mejora al agregar más capas,
+qué problemas siguen apareciendo y por qué detectar phishing real es más difícil de lo que parece.
 
 ---
 
 ## Qué vamos a aprender
 
-- Cómo funciona un detector con múltiples capas
 - Por qué las reglas simples no bastan siempre
+- Cómo funciona un detector con varias capas
 - Qué hace un modelo de ML aplicado a texto
 - Qué significa convertir texto en números usando TF-IDF
 - Por qué combinar reglas y ML no es tan directo
-- Qué limitaciones siguen apareciendo incluso con un sistema más avanzado
+- Qué límites siguen existiendo incluso en un sistema más avanzado
 
 ---
 
@@ -111,11 +115,40 @@ pero en ese caso solo funcionará la capa de reglas en JavaScript.
 
 ---
 
+# Por qué hacen falta varias capas
+
+En el scanner anterior, el detector hacía algo muy simple:
+
+```text
+buscar palabra sospechosa → sumar puntaje → mostrar alerta
+```
+
+Eso sirve para entender la idea base.
+
+Pero en mensajes reales empiezan los problemas:
+
+- una palabra urgente puede aparecer en un correo legítimo
+- un phishing puede no usar palabras obvias
+- un enlace puede parecer normal pero apuntar a otro dominio
+- un mensaje puede manipular sin tener frases típicas de estafa
+
+Entonces aparece la necesidad de agregar más señales.
+
+NotPhish prueba ese camino:
+
+```text
+reglas visibles → patrones aprendidos → combinación de señales
+```
+
+Cada capa intenta resolver una parte del problema.
+
+Pero cada capa también trae errores nuevos.
+
+---
+
 # Cómo funciona por dentro
 
-NotPhish combina tres capas.
-
-Cada capa aporta algo distinto, pero también introduce nuevos problemas.
+NotPhish combina tres capas principales:
 
 ```text
 reglas JS → modelo ML → sistema híbrido
@@ -127,11 +160,11 @@ reglas JS → modelo ML → sistema híbrido
 
 La primera capa está en `app.js`.
 
-Es parecida a la idea del scanner:
-buscar señales sospechosas dentro del texto.
+Es la parte más parecida al scanner:
+busca señales sospechosas dentro del texto.
 
 Pero en vez de sumar 1 punto por cada palabra,
-este motor usa pesos distintos según la importancia de cada señal.
+usa pesos distintos según la importancia de cada señal.
 
 No todas las señales valen lo mismo.
 
@@ -165,6 +198,18 @@ Por ejemplo:
 
 ---
 
+### Qué mejora respecto al scanner
+
+El scanner era útil para aprender la idea básica,
+pero trataba muchas señales como si fueran iguales.
+
+NotPhish intenta mejorar eso usando pesos.
+
+Una palabra aislada no debería valer lo mismo que un dominio falso,
+un pedido de código OTP o una combinación de urgencia + transferencia + silencio.
+
+---
+
 ### Por qué esta capa no basta
 
 Las reglas pueden detectar señales visibles,
@@ -175,10 +220,12 @@ no entienden completamente el contexto.
 Un mensaje puede no tener enlaces raros ni palabras típicas,
 y aun así ser manipulación.
 
-O al revés:
+También puede pasar lo contrario:
 
-un mensaje legítimo puede tener palabras como “urgente”, “cuenta” o “verificación”
+un mensaje legítimo puede usar palabras como “urgente”, “cuenta” o “verificación”
 y activar alertas innecesarias.
+
+Por eso agregamos una segunda capa.
 
 ---
 
@@ -186,7 +233,7 @@ y activar alertas innecesarias.
 
 La segunda capa usa un modelo de ML (Machine Learning).
 
-La idea es que el sistema no dependa solo de reglas escritas a mano,
+La idea es que el sistema no dependa solamente de reglas escritas a mano,
 sino que pueda aprender patrones a partir de ejemplos.
 
 El modelo fue entrenado con textos clasificados como legítimos o sospechosos.
@@ -285,15 +332,32 @@ urg3nte
 
 ---
 
-### Limitación importante
+### Qué mejora respecto a las reglas
 
-El modelo fue entrenado principalmente con datos en inglés.
+Las reglas buscan señales definidas manualmente.
+
+El modelo, en cambio, puede aprender patrones que no escribimos uno por uno.
+
+Eso permite detectar mensajes donde no aparece una palabra exacta,
+pero sí una combinación de elementos que se parece a otros casos sospechosos.
+
+---
+
+### Por qué esta capa tampoco basta
+
+El ML también se equivoca.
+
+Puede marcar como sospechoso un texto legítimo
+solo porque se parece estadísticamente a mensajes fraudulentos del dataset.
+
+También puede fallar si el mensaje está en otro idioma,
+si es muy corto o si usa un contexto que el modelo no vio durante el entrenamiento.
+
+En este proyecto, una limitación importante es que el modelo fue entrenado principalmente con datos en inglés.
 
 Eso significa que su rendimiento en español puede ser más débil.
 
-Esta parte es importante porque muchos sistemas parecen funcionar bien en general,
-pero bajan su calidad cuando cambian el idioma, el contexto cultural
-o el tipo de mensaje.
+Por eso no basta con dejar que el modelo decida solo.
 
 ---
 
@@ -361,6 +425,23 @@ Por eso el sistema híbrido intenta equilibrar ambas capas.
 No lo hace perfecto.
 
 Pero justamente ahí está el aprendizaje.
+
+---
+
+# Resumen del flujo
+
+Una forma simple de entender NotPhish es esta:
+
+```text
+1. Las reglas buscan señales visibles.
+2. El modelo ML busca patrones aprendidos en el texto.
+3. El sistema híbrido decide cuánto peso darle a cada parte.
+4. La interfaz muestra el resultado en lenguaje simple.
+```
+
+El objetivo es ver cómo un detector puede pasar de una lógica simple
+a una lógica más parecida a la que usan sistemas reales:
+combinar varias señales antes de decidir.
 
 ---
 
