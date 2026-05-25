@@ -12,7 +12,7 @@ Ese enfoque sirve para aprender, pero tiene límites claros:
 
 NotPhish nace desde esa pregunta:
 
-> ¿qué pasa si intentamos mejorar un detector combinando reglas simples con Machine Learning?
+> ¿qué pasa si intentamos mejorar el detector combinando reglas simples con Machine Learning?
 
 ---
 
@@ -20,16 +20,16 @@ NotPhish nace desde esa pregunta:
 
 NotPhish es un proyecto educativo para entender cómo puede evolucionar un detector de phishing cuando deja de depender solamente de palabras clave.
 
-El proyecto combina tres capas:
+Combina tres partes principales:
 
-1. un motor de reglas en JavaScript
+1. reglas en JavaScript
 2. un modelo de ML (Machine Learning)
-3. una capa híbrida que decide cómo combinar ambos resultados
+3. una capa híbrida que intenta unir ambas respuestas
 
-La idea no es construir un sistema perfecto.
+La idea no es llegar a un detector perfecto.
 
-La idea es entender qué mejora al agregar más capas,
-qué problemas siguen apareciendo y por qué detectar phishing real es más difícil de lo que parece.
+La idea es ver qué mejora al agregar más capas,
+qué sigue fallando y por qué detectar phishing real no es tan simple como parece.
 
 ---
 
@@ -40,7 +40,7 @@ qué problemas siguen apareciendo y por qué detectar phishing real es más dif�
 - Qué hace un modelo de ML aplicado a texto
 - Qué significa convertir texto en números usando TF-IDF
 - Por qué combinar reglas y ML no es tan directo
-- Qué límites siguen existiendo incluso en un sistema más avanzado
+- Qué límites siguen existiendo incluso con un sistema más avanzado
 
 ---
 
@@ -59,9 +59,9 @@ Algunas vistas de la interfaz en funcionamiento:
 
 ## La interfaz
 
-La interfaz intenta explicar el resultado en lenguaje simple.
+La interfaz intenta mostrar el resultado en lenguaje simple.
 
-La idea no es solo decir:
+No se queda solo en:
 
 ```text
 riesgo alto
@@ -73,10 +73,10 @@ o
 riesgo bajo
 ```
 
-sino mostrar qué señales encontró el sistema y qué acción segura podría tomar la persona.
+También muestra qué señales encontró el sistema y qué acción segura podría tomar la persona.
 
-Está pensada para que el análisis sea más fácil de entender,
-especialmente para usuarios que no necesariamente conocen conceptos técnicos de ciberseguridad.
+La idea es que el análisis sea más fácil de entender,
+incluso para usuarios que no manejan conceptos técnicos de ciberseguridad.
 
 ---
 
@@ -117,22 +117,22 @@ pero en ese caso solo funcionará la capa de reglas en JavaScript.
 
 # Por qué hacen falta varias capas
 
-En el scanner anterior, el detector hacía algo muy simple:
+En el scanner anterior, la lógica era muy simple:
 
 ```text
 buscar palabra sospechosa → sumar puntaje → mostrar alerta
 ```
 
-Eso sirve para entender la idea base.
+Eso sirve para entender la base.
 
-Pero en mensajes reales empiezan los problemas:
+Pero en mensajes reales aparecen problemas:
 
 - una palabra urgente puede aparecer en un correo legítimo
 - un phishing puede no usar palabras obvias
-- un enlace puede parecer normal pero apuntar a otro dominio
+- un enlace puede parecer normal, pero apuntar a otro dominio
 - un mensaje puede manipular sin tener frases típicas de estafa
 
-Entonces aparece la necesidad de agregar más señales.
+Entonces aparece la necesidad de mirar más señales.
 
 NotPhish prueba ese camino:
 
@@ -140,19 +140,17 @@ NotPhish prueba ese camino:
 reglas visibles → patrones aprendidos → combinación de señales
 ```
 
-Cada capa intenta resolver una parte del problema.
-
-Pero cada capa también trae errores nuevos.
-
 ---
 
 # Cómo funciona por dentro
 
-NotPhish combina tres capas principales:
+NotPhish combina tres capas:
 
 ```text
 reglas JS → modelo ML → sistema híbrido
 ```
+
+Cada capa ayuda en algo, pero ninguna arregla todo.
 
 ---
 
@@ -163,10 +161,7 @@ La primera capa está en `app.js`.
 Es la parte más parecida al scanner:
 busca señales sospechosas dentro del texto.
 
-Pero en vez de sumar 1 punto por cada palabra,
-usa pesos distintos según la importancia de cada señal.
-
-No todas las señales valen lo mismo.
+La diferencia es que ahora no todas las señales valen lo mismo.
 
 Por ejemplo:
 
@@ -200,20 +195,18 @@ Por ejemplo:
 
 ### Qué mejora respecto al scanner
 
-El scanner era útil para aprender la idea básica,
-pero trataba muchas señales como si fueran iguales.
+El scanner trataba muchas señales como si fueran parecidas.
 
-NotPhish intenta mejorar eso usando pesos.
+NotPhish intenta separar señales débiles de señales más fuertes.
 
-Una palabra aislada no debería valer lo mismo que un dominio falso,
+Una palabra aislada no debería pesar lo mismo que un dominio falso,
 un pedido de código OTP o una combinación de urgencia + transferencia + silencio.
 
 ---
 
-### Por qué esta capa no basta
+### Dónde falla
 
-Las reglas pueden detectar señales visibles,
-pero siguen teniendo el mismo problema de fondo:
+Las reglas siguen teniendo el mismo problema de fondo:
 
 no entienden completamente el contexto.
 
@@ -225,7 +218,7 @@ También puede pasar lo contrario:
 un mensaje legítimo puede usar palabras como “urgente”, “cuenta” o “verificación”
 y activar alertas innecesarias.
 
-Por eso agregamos una segunda capa.
+Por eso aparece la segunda capa.
 
 ---
 
@@ -233,14 +226,14 @@ Por eso agregamos una segunda capa.
 
 La segunda capa usa un modelo de ML (Machine Learning).
 
-La idea es que el sistema no dependa solamente de reglas escritas a mano,
-sino que pueda aprender patrones a partir de ejemplos.
+La idea es que el sistema no dependa solo de reglas escritas a mano,
+sino que también pueda aprender patrones desde ejemplos.
 
 El modelo fue entrenado con textos clasificados como legítimos o sospechosos.
 
 No “entiende” como una persona,
-pero puede aprender que ciertas combinaciones de palabras aparecen con más frecuencia
-en mensajes fraudulentos.
+pero puede aprender que ciertas combinaciones de palabras aparecen más
+en mensajes fraudulentos que en mensajes normales.
 
 ---
 
@@ -254,7 +247,7 @@ es un modelo lineal que aprende ajustando pesos internos.
 
 No es una red neuronal.
 No es un LLM.
-No “razona” el mensaje.
+No razona el mensaje.
 
 Aprende patrones estadísticos desde los datos de entrenamiento.
 
@@ -268,7 +261,7 @@ Primero necesita convertir ese texto en números.
 
 Para eso se usa TF-IDF (Term Frequency–Inverse Document Frequency).
 
-La idea básica es:
+La idea básica es esta:
 
 - si una palabra aparece mucho en un mensaje, puede ser importante
 - pero si aparece en todos los mensajes, probablemente no dice mucho
@@ -295,7 +288,7 @@ código de seguridad
 
 pueden aportar más información.
 
-TF-IDF ayuda al modelo a transformar texto en números útiles para clasificar.
+TF-IDF ayuda a transformar texto en números útiles para que el modelo pueda clasificar.
 
 ---
 
@@ -307,7 +300,7 @@ Eso se llama n-grams.
 
 Un n-gram es una secuencia de elementos.
 
-Por ejemplo, en palabras:
+Por ejemplo:
 
 ```text
 expira hoy
@@ -315,7 +308,7 @@ verifica cuenta
 código seguridad
 ```
 
-pueden decir más que cada palabra por separado.
+puede decir más que mirar cada palabra por separado.
 
 También existen n-grams de caracteres.
 
@@ -334,30 +327,34 @@ urg3nte
 
 ### Qué mejora respecto a las reglas
 
-Las reglas buscan señales definidas manualmente.
+Las reglas detectan lo que alguien escribió manualmente.
 
-El modelo, en cambio, puede aprender patrones que no escribimos uno por uno.
+El modelo puede encontrar patrones que no escribimos uno por uno.
 
 Eso permite detectar mensajes donde no aparece una palabra exacta,
-pero sí una combinación de elementos que se parece a otros casos sospechosos.
+pero sí una combinación de elementos parecida a otros casos sospechosos.
 
 ---
 
-### Por qué esta capa tampoco basta
+### Dónde falla
 
 El ML también se equivoca.
 
 Puede marcar como sospechoso un texto legítimo
 solo porque se parece estadísticamente a mensajes fraudulentos del dataset.
 
-También puede fallar si el mensaje está en otro idioma,
-si es muy corto o si usa un contexto que el modelo no vio durante el entrenamiento.
+También puede fallar si:
+
+- el mensaje es muy corto
+- el idioma cambia
+- el contexto cultural es distinto
+- el caso no se parece a los ejemplos de entrenamiento
 
 En este proyecto, una limitación importante es que el modelo fue entrenado principalmente con datos en inglés.
 
 Eso significa que su rendimiento en español puede ser más débil.
 
-Por eso no basta con dejar que el modelo decida solo.
+Por eso no conviene dejar que el modelo decida solo.
 
 ---
 
@@ -365,9 +362,9 @@ Por eso no basta con dejar que el modelo decida solo.
 
 La tercera capa está en `hybrid.js`.
 
-Aquí aparece uno de los problemas más interesantes del proyecto:
+Aquí aparece una pregunta importante:
 
-¿qué pasa si las reglas dicen una cosa y el modelo dice otra?
+> ¿qué pasa si las reglas dicen una cosa y el modelo dice otra?
 
 Por ejemplo:
 
@@ -377,7 +374,7 @@ Por ejemplo:
 
 Entonces no basta con sumar todo y listo.
 
-Hay que decidir cuánto peso darle a cada capa.
+Hay que decidir cuánto peso darle a cada parte.
 
 ---
 
@@ -402,17 +399,12 @@ cuando no hay suficiente evidencia.
 
 ---
 
-### Por qué esto importa
+### Dónde falla
 
-Combinar reglas y ML no es simplemente decir:
+Combinar reglas y ML no significa automáticamente tener un mejor detector.
 
-```text
-reglas + modelo = mejor detector
-```
-
-A veces mejora.
-
-Pero también puede traer problemas nuevos:
+Puede mejorar algunas cosas,
+pero también puede traer problemas nuevos:
 
 - más falsos positivos
 - exceso de confianza en el modelo
@@ -420,11 +412,12 @@ Pero también puede traer problemas nuevos:
 - errores por mensajes demasiado cortos
 - conflictos entre señales
 
-Por eso el sistema híbrido intenta equilibrar ambas capas.
+El sistema híbrido intenta equilibrar ambas capas.
 
 No lo hace perfecto.
 
-Pero justamente ahí está el aprendizaje.
+Pero sirve para entender por qué combinar señales es más difícil
+que simplemente sumar resultados.
 
 ---
 
@@ -441,15 +434,13 @@ Una forma simple de entender NotPhish es esta:
 
 El objetivo es ver cómo un detector puede pasar de una lógica simple
 a una lógica más parecida a la que usan sistemas reales:
-combinar varias señales antes de decidir.
+mirar varias señales antes de decidir.
 
 ---
 
 # Limitaciones conocidas
 
 NotPhish sigue teniendo límites importantes.
-
-Documentarlos es parte del objetivo del proyecto.
 
 - Puede generar falsos positivos en mensajes legítimos con lenguaje agresivo o comercial.
 - El rendimiento en español puede ser menor porque el modelo fue entrenado principalmente con datos en inglés.
@@ -564,11 +555,9 @@ Soy estudiante de ingeniería informática y ciberseguridad. A la fecha de este 
 
 Este proyecto fue construido usando Claude (Anthropic) como herramienta de desarrollo y aprendizaje. La IA tuvo un rol importante en la implementación, en decisiones técnicas y en la generación del código.
 
-Mi rol fue definir qué quería explorar, probar el sistema, iterar ideas, evaluar propuestas, descartar lo que no tenía sentido y entender progresivamente cómo funcionaban las capas del detector.
+Mi rol fue definir qué quería explorar, probar el sistema, revisar resultados, descartar ideas que no tenían sentido y entender progresivamente cómo funcionaban las capas del detector.
 
-Lo comparto como parte de un proceso real de aprendizaje, porque construir algo concreto me ayudó mucho más que solo leer teoría.
-
-Espero que también pueda servirle a otros estudiantes que estén empezando y quieran entender cómo un detector puede evolucionar desde reglas simples hacia sistemas híbridos.
+Lo comparto porque construir algo concreto me ayudó mucho más que solo leer teoría, y quizás también le sirva a otros estudiantes que estén empezando.
 
 ---
 
