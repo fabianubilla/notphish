@@ -53,7 +53,7 @@ No muestra solo “riesgo alto” o “riesgo bajo”. También explica qué enc
 ## Cómo usarlo
 
 ```bash
-git clone https://github.com/fivur-cs/notphish.git
+git clone https://github.com/fabianubilla/notphish.git
 cd notphish
 ```
 
