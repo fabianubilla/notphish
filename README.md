@@ -1,5 +1,14 @@
 # NotPhish
 
+## Demo
+
+https://fabianubilla.github.io/NotPhish/
+
+> La demo publicada en GitHub Pages utiliza únicamente la capa de reglas implementada en JavaScript.
+> El modelo de machine learning y el sistema híbrido requieren ejecutar `server.py` localmente.
+
+---
+
 ## ¿Qué pasa cuando las reglas no son suficientes?
 
 Después de construir el [social-engineering-scanner](https://github.com/fabianubilla/social-engineering-scanner), me quedó claro que buscar palabras sospechosas servía para algunos casos, pero fallaba apenas cambiaba el contexto.
