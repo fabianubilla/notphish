@@ -2,7 +2,7 @@
 
 ## ¿Qué pasa cuando las reglas no son suficientes?
 
-Después de construir el `social-engineering-scanner`, me quedó claro que buscar palabras sospechosas servía para algunos casos, pero fallaba apenas cambiaba el contexto.
+Después de construir el [social-engineering-scanner](https://github.com/fabianubilla/social-engineering-scanner), me quedó claro que buscar palabras sospechosas servía para algunos casos, pero fallaba apenas cambiaba el contexto.
 
 El scanner podía marcar correos legítimos como fraude y dejar pasar estafas que no usaban las palabras esperadas.
 
