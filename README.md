@@ -2,7 +2,7 @@
 
 ## Demo
 
-https://fabianubilla.github.io/NotPhish/
+[https://fabianubilla.github.io/NotPhish/](https://fabianubilla.github.io/notphish/)
 
 > La demo publicada en GitHub Pages utiliza únicamente la capa de reglas implementada en JavaScript.
 > El modelo de machine learning y el sistema híbrido requieren ejecutar `server.py` localmente.
