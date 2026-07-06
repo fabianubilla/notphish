@@ -6,14 +6,6 @@
 
 Educational cybersecurity project focused on understanding phishing detection through rule-based analysis and machine learning.
 
-## Demo
-
-https://fabianubilla.github.io/NotPhish/
-
-The GitHub Pages demo uses only the JavaScript rule-based layer.
-
-The machine learning model and the hybrid system require running `server.py` locally.
-
 ## Overview
 
 NotPhish is a phishing detection prototype that analyzes message content using multiple layers:
