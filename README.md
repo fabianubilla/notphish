@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.png" alt="NotPhish" width="100%">
+</p>
+
 # NotPhish
 
 Proyecto educativo de ciberseguridad orientado a comprender la detección de phishing mediante análisis basado en reglas y machine learning.
