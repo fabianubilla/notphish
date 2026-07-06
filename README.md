@@ -6,6 +6,8 @@
 
 Educational cybersecurity project focused on understanding phishing detection through rule-based analysis and machine learning.
 
+> **Note:** The application interface and examples remain in Spanish, as the project was originally developed for educational purposes using Spanish-language phishing scenarios.
+
 ## Overview
 
 NotPhish is a phishing detection prototype that analyzes message content using multiple layers:
