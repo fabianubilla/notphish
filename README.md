@@ -69,7 +69,9 @@ Esta capa es fácil de entender y revisar, pero tiene una limitación importante
 
 ### Capa 2: modelo de machine learning
 
-La segunda capa usa un modelo entrenado con textos de phishing, scam, newsletters y correos legítimos.
+La segunda capa usa un modelo entrenado con aproximadamente 46.000 textos reunidos desde datasets públicos relacionados con phishing, scam, newsletters y correos legítimos.
+
+Para este proyecto busqué y revisé datasets que permitieran comparar mensajes fraudulentos con mensajes legítimos. El objetivo no era construir un modelo perfecto, sino entender cómo se comporta un clasificador cuando aprende patrones desde muchos ejemplos reales.
 
 El modelo utilizado es SGD, Stochastic Gradient Descent. No es una red neuronal ni un LLM. Es un modelo lineal que aprende patrones a partir de ejemplos.
 
