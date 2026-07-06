@@ -4,133 +4,133 @@
 
 # NotPhish
 
-Proyecto educativo de ciberseguridad orientado a comprender la detección de phishing mediante análisis basado en reglas y machine learning.
+Educational cybersecurity project focused on understanding phishing detection through rule-based analysis and machine learning.
 
 ## Demo
 
 https://fabianubilla.github.io/NotPhish/
 
-La demo publicada en GitHub Pages utiliza solo la capa de reglas implementada en JavaScript.
+The GitHub Pages demo uses only the JavaScript rule-based layer.
 
-El modelo de machine learning y el sistema híbrido requieren ejecutar `server.py` localmente.
+The machine learning model and the hybrid system require running `server.py` locally.
 
-## Resumen
+## Overview
 
-NotPhish es un prototipo de detección de phishing que analiza el contenido de mensajes usando varias capas:
+NotPhish is a phishing detection prototype that analyzes message content using multiple layers:
 
-- reglas en JavaScript
-- modelo de machine learning
-- sistema híbrido que combina ambos resultados
+- JavaScript rules
+- machine learning model
+- hybrid system that combines both results
 
-El proyecto nació como una continuación de Social Engineering Scanner, donde exploré las limitaciones de detectar mensajes sospechosos usando solo reglas y palabras clave.
+The project began as a continuation of Social Engineering Scanner, where I explored the limitations of detecting suspicious messages using only rules and keywords.
 
-No es una herramienta lista para producción. Es un proyecto educativo creado para entender mejor cómo funcionan estos enfoques, dónde fallan y por qué detectar phishing real es más difícil de lo que parece.
+It is not a production-ready tool. It is an educational project created to better understand how these approaches work, where they fail, and why detecting real phishing is more difficult than it seems.
 
-## Objetivo
+## Goal
 
-Con este proyecto quise entender:
+With this project I wanted to understand:
 
-- por qué las reglas simples no bastan para detectar phishing
-- cómo funciona un detector con varias capas de análisis
-- qué hace un modelo de machine learning aplicado a texto
-- cómo TF-IDF convierte texto en datos numéricos
-- qué problemas aparecen al combinar reglas con machine learning
-- qué limitaciones siguen existiendo en un sistema más complejo
+- why simple rules are not enough to detect phishing
+- how a multi-layer detection system works
+- what a machine learning model does when applied to text
+- how TF-IDF converts text into numerical data
+- what challenges appear when combining rules with machine learning
+- what limitations still exist in a more complex system
 
-## Funciones principales
+## Main Features
 
-- detección basada en reglas
-- análisis de URLs sospechosas
-- detección de señales de ingeniería social
-- detección de intentos de robo de códigos OTP
-- modelo de machine learning para clasificar textos
-- sistema híbrido para combinar reglas y ML
-- interfaz web con explicaciones simples para el usuario
-- log técnico para revisar qué señales activaron el análisis
+- rule-based detection
+- suspicious URL analysis
+- social engineering signal detection
+- OTP code theft attempt detection
+- machine learning model for text classification
+- hybrid system combining rules and machine learning
+- web interface with simple explanations for the user
+- technical log showing which signals triggered the analysis
 
-## Cómo funciona
+## How It Works
 
-NotPhish analiza el mensaje usando tres capas principales.
+NotPhish analyzes a message using three main layers.
 
-### Capa 1: reglas en JavaScript
+### Layer 1: JavaScript Rules
 
-La primera capa revisa señales concretas dentro del texto.
+The first layer checks for specific signals within the text.
 
-Detecta elementos como:
+It detects elements such as:
 
-- dominios que imitan marcas conocidas
-- URLs acortadas o con formatos extraños
-- solicitudes de códigos OTP
-- urgencia
-- autoridad
-- aislamiento
-- promesas de beneficio
-- patrones típicos de ingeniería social
+- domains that imitate well-known brands
+- shortened or unusual URLs
+- OTP code requests
+- urgency
+- authority
+- isolation
+- promises of reward
+- common social engineering patterns
 
-Cada señal tiene un peso. Algunas señales son débiles y solo aportan al score. Otras son más fuertes y pueden activar alertas más directas.
+Each signal has a weight. Some signals are weak and only contribute to the overall score. Others are stronger and can trigger more direct alerts.
 
-Esta capa es fácil de entender y revisar, pero tiene una limitación importante: no comprende realmente el contexto. Un mensaje legítimo puede activar reglas sospechosas y un mensaje fraudulento puede evitar las palabras esperadas.
+This layer is easy to understand and review, but it has an important limitation: it does not truly understand context. A legitimate message may trigger suspicious rules, while a fraudulent message may avoid the expected keywords.
 
-### Capa 2: modelo de machine learning
+### Layer 2: Machine Learning Model
 
-La segunda capa usa un modelo entrenado con aproximadamente 46.000 textos reunidos desde datasets públicos relacionados con phishing, scam, newsletters y correos legítimos.
+The second layer uses a model trained on approximately 46,000 texts collected from public datasets related to phishing, scams, newsletters, and legitimate emails.
 
-Para este proyecto busqué y revisé datasets que permitieran comparar mensajes fraudulentos con mensajes legítimos. El objetivo no era construir un modelo perfecto, sino entender cómo se comporta un clasificador cuando aprende patrones desde muchos ejemplos reales.
+For this project, I searched for and reviewed datasets that allowed comparisons between fraudulent and legitimate messages. The goal was not to build a perfect model, but to understand how a classifier behaves when learning patterns from many real examples.
 
-El modelo utilizado es SGD, Stochastic Gradient Descent. No es una red neuronal ni un LLM. Es un modelo lineal que aprende patrones a partir de ejemplos.
+The model used is SGD (Stochastic Gradient Descent). It is not a neural network or an LLM. It is a linear model that learns patterns from examples.
 
-Antes de clasificar el texto, el sistema lo convierte en números usando TF-IDF.
+Before classifying the text, the system converts it into numerical features using TF-IDF.
 
-TF-IDF ayuda a representar qué palabras son relevantes dentro de un mensaje:
+TF-IDF helps represent which words are important within a message:
 
-- TF mide qué tan frecuente aparece una palabra en el texto
-- IDF reduce el peso de palabras demasiado comunes
-- las palabras más distintivas reciben más importancia
+- TF measures how frequently a word appears in the text
+- IDF reduces the weight of overly common words
+- more distinctive words receive greater importance
 
-El modelo también analiza combinaciones de palabras y variaciones de caracteres. Esto ayuda a detectar expresiones que pueden tener más sentido juntas que por separado.
+The model also analyzes combinations of words and character variations. This helps detect expressions that may carry more meaning together than individually.
 
-El modelo fue entrenado principalmente con textos en inglés, por lo que su rendimiento en español latinoamericano es más limitado.
+The model was trained primarily on English texts, so its performance on Latin American Spanish is more limited.
 
-### Capa 3: sistema híbrido
+### Layer 3: Hybrid System
 
-La tercera capa combina el resultado de las reglas con el resultado del modelo de machine learning.
+The third layer combines the output of the rule-based system with the output of the machine learning model.
 
-El problema es que ambas capas no siempre coinciden. Las reglas pueden marcar un mensaje como seguro mientras el modelo lo considera sospechoso. También puede pasar lo contrario.
+The challenge is that both layers do not always agree. The rules may classify a message as safe while the model considers it suspicious. The opposite can also happen.
 
-Para controlar esa diferencia, el sistema usa un `evidence gate`. Esta lógica decide cuánta influencia puede tener el modelo según la evidencia disponible.
+To manage this difference, the system uses an `evidence gate`. This logic determines how much influence the model should have based on the available evidence.
 
-El objetivo es evitar que el modelo cambie demasiado el resultado cuando el texto es corto, ambiguo o no tiene suficientes señales técnicas.
+The goal is to prevent the model from changing the result too much when the text is short, ambiguous, or lacks sufficient technical signals.
 
-Este sistema no elimina los errores. Solo intenta hacer que la combinación entre reglas y machine learning sea más controlada.
+This system does not eliminate errors. It simply attempts to make the combination of rules and machine learning more controlled.
 
-## Instalación y uso
+## Installation and Usage
 
-Clonar el repositorio:
+Clone the repository:
 
 ```bash
 git clone https://github.com/fabianubilla/notphish.git
 cd notphish
 ```
 
-En macOS:
+On macOS:
 
 ```bash
 pip3 install scikit-learn joblib flask
 python3 server.py
 ```
 
-En Linux:
+On Linux:
 
 ```bash
 pip install scikit-learn joblib flask
 python server.py
 ```
 
-Luego abre `index.html` en el navegador.
+Then open `index.html` in your browser.
 
-También puedes abrir `index.html` directamente sin ejecutar Python. En ese caso solo funcionará la capa de reglas en JavaScript, sin machine learning.
+You can also open `index.html` directly without running Python. In that case, only the JavaScript rule-based layer will work, without machine learning.
 
-## Estructura del proyecto
+## Project Structure
 
 ```text
 notphish/
@@ -145,79 +145,79 @@ notphish/
     └── subcategory_model_candidate.joblib
 ```
 
-## Archivos principales
+## Main Files
 
 ### `index.html`
 
-Interfaz web del proyecto.
+Project web interface.
 
 ### `app.js`
 
-Motor de reglas en JavaScript.
+JavaScript rule engine.
 
 ### `hybrid.js`
 
-Sistema híbrido que combina reglas y machine learning.
+Hybrid system combining rules and machine learning.
 
 ### `hints.js`
 
-Textos explicativos para mostrar al usuario.
+Explanatory texts displayed to the user.
 
 ### `server.py`
 
-Servidor Flask que carga el modelo y responde a las peticiones del frontend.
+Flask server that loads the model and responds to frontend requests.
 
 ### `config.json`
 
-Parámetros, umbrales y pesos usados por el sistema.
+Parameters, thresholds, and weights used by the system.
 
 ### `models/`
 
-Modelos entrenados usados por la capa de machine learning.
+Trained models used by the machine learning layer.
 
-## Limitaciones
+## Limitations
 
-- No es una herramienta lista para producción
-- El modelo fue entrenado principalmente con textos en inglés
-- El rendimiento en español latinoamericano es más limitado
-- Puede generar falsos positivos
-- Puede fallar con mensajes muy cortos o ambiguos
-- No analiza headers de correo
-- No detecta phishing basado en imágenes o códigos QR
-- No funciona en tiempo real
-- Requiere pegar manualmente el texto a analizar
-- Las reglas pueden ser evadidas si alguien conoce cómo funcionan
+- Not a production-ready tool
+- The model was trained primarily on English texts
+- Performance on Latin American Spanish is more limited
+- May generate false positives
+- May fail with very short or ambiguous messages
+- Does not analyze email headers
+- Does not detect image-based or QR code phishing
+- Does not operate in real time
+- Requires manually pasting the text to analyze
+- The rules can be bypassed if someone knows how they work
 
-## Qué aprendí
+## What I Learned
 
-Este proyecto me ayudó a entender que agregar machine learning no convierte automáticamente un detector en una herramienta confiable.
+This project helped me understand that adding machine learning does not automatically turn a detector into a reliable tool.
 
-Las reglas son fáciles de revisar, pero no entienden contexto. El modelo puede encontrar patrones más amplios, pero también puede equivocarse, especialmente con textos ambiguos o en idiomas distintos a los del entrenamiento.
+Rules are easy to review, but they do not understand context. The model can identify broader patterns, but it can also make mistakes, especially with ambiguous texts or languages different from those used during training.
 
-La parte más interesante fue ver que el problema no era solo detectar más señales. También había que decidir qué hacer cuando las distintas capas del sistema no estaban de acuerdo.
+The most interesting part was realizing that the challenge was not only detecting more signals. It was also deciding what to do when the different layers of the system disagreed.
 
-NotPhish me permitió entender mejor conceptos como TF-IDF, clasificación de texto, falsos positivos, scoring híbrido y limitaciones prácticas en la detección de phishing.
+NotPhish helped me better understand concepts such as TF-IDF, text classification, false positives, hybrid scoring, and practical limitations in phishing detection.
 
-## Próximo paso
+## Next Step
 
-Este proyecto analiza principalmente el contenido del mensaje.
+This project mainly analyzes the content of a message.
 
-Una capa pendiente sería analizar los headers del correo, donde pueden aparecer señales técnicas relacionadas con el dominio, la ruta del mensaje y los mecanismos de autenticación como SPF, DKIM y DMARC.
+A future layer would analyze email headers, where technical indicators related to the domain, message routing, and authentication mechanisms such as SPF, DKIM, and DMARC can be found.
 
-## Tecnologías
+## Technologies
 
 HTML · CSS · JavaScript · Python · Flask · scikit-learn · TF-IDF · SGD
 
-## Desarrollo asistido por IA
+## AI-Assisted Development
 
-Este proyecto fue desarrollado con apoyo importante de Claude, de Anthropic, especialmente en la escritura del código, la estructura técnica y varias decisiones de implementación.
+This project was developed with significant support from Claude by Anthropic, particularly in code writing, technical structure, and several implementation decisions.
 
-No presento este repositorio como una herramienta construida íntegramente de forma manual por mí. Lo comparto como un proyecto educativo y como parte de mi proceso real de aprendizaje en ciberseguridad e informática.
+I do not present this repository as a tool built entirely by hand. I share it as an educational project and as part of my real learning process in cybersecurity and computer science.
 
-Mi rol fue definir qué quería explorar, guiar el enfoque del proyecto, probar el sistema, revisar sus resultados, detectar errores, ajustar ideas, descartar propuestas que no tenían sentido y entender progresivamente cómo se conectaban sus distintas capas: reglas, modelo de machine learning y sistema híbrido.
+My role was to define what I wanted to explore, guide the project's direction, test the system, review its results, identify errors, refine ideas, discard approaches that did not make sense, and progressively understand how its different layers were connected: rules, the machine learning model, and the hybrid system.
 
-Trabajar con este proyecto me ayudó a aprender más que solo leer teoría, porque pude probar una herramienta concreta, ver dónde fallaba y entender mejor las limitaciones de la detección de phishing.
+Working on this project helped me learn more than simply reading theory because I was able to experiment with a real tool, observe where it failed, and better understand the limitations of phishing detection.
 
-## Licencia
+## License
 
 MIT
