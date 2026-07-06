@@ -1,4 +1,6 @@
-# NotPhish
+<p align="center">
+  <img src="assets/banner.png" alt="NotPhish" width="100%">
+</p>
 
 ## Demo
 
