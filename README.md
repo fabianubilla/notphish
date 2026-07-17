@@ -2,6 +2,8 @@
   <img src="assets/banner.png" alt="NotPhish" width="100%">
 </p>
 
+Demo: https://fabianubilla.github.io/notphish/
+
 # NotPhish
 
 Educational cybersecurity project focused on understanding phishing detection through rule-based analysis and machine learning.
